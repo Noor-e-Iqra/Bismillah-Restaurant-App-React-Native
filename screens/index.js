@@ -22,5 +22,6 @@ export {
     SignIn,
     ForgotPassword,
     Account,
-    UpdateProfile
+    UpdateProfile,
+
 }

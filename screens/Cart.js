@@ -4,18 +4,16 @@ import { Globalstyles } from "../styles/GlobalStyle";
 import { CartItems, InnerHeader } from "../components";
 import { DATABASE_URL } from "../constants";
 import { firebase } from '@react-native-firebase/database';
-import auth from "@react-native-firebase/auth"
+import { useSelector } from 'react-redux';
 
 const Cart = ({ navigation }) => {
 
+    const { user } = useSelector(state => state.userReducer);
     const [cartItems, setCartItems] = useState(null)
-    const [user, setUser] = useState(null)
     const cartReference = firebase.app().database(DATABASE_URL).ref('/Cart/');
 
     useEffect(() => {
-
-        auth().onAuthStateChanged(onAuthStateChanged)
-        if (user != null) {
+        if (user) {
             let array = [];
             cartReference.on('value', snapshot => {
                 snapshot.forEach((snapshotItem) => {
@@ -31,9 +29,6 @@ const Cart = ({ navigation }) => {
 
     }, [user]);
 
-    function onAuthStateChanged(user) {
-        setUser(user)
-    }
 
     // function for saving order data in firebase
     function confirmOrder() {

@@ -5,34 +5,29 @@ import { CustomButton, CartIcon } from "../components";
 import { COLORS, icons, SIZES, images, FONTS, DATABASE_URL } from '../constants';
 import { isIphoneX } from 'react-native-iphone-x-helper';
 import { firebase } from '@react-native-firebase/database';
-import auth from "@react-native-firebase/auth"
+import { useSelector } from 'react-redux';
 
 const Restaurant = ({ route, navigation }) => {
 
+    const { user } = useSelector(state => state.userReducer);
     const [item, setItem] = useState(null)
-    const [user, setUser] = useState(null)
     const [category, setCategory] = useState(null)
 
     useEffect(() => {
-        auth().onAuthStateChanged(onAuthStateChanged)
         const { currentItem, currentCategory } = route.params;
         setItem(currentItem)
         if (currentCategory == "Sand\nWiches")
             setCategory(currentCategory.replace("\nW", "w"))
         else
             setCategory(currentCategory.replace("\n", " "))
-
     }, [])
 
-    function onAuthStateChanged(user) {
-        setUser(user)
-    }
 
-    //function for adding item in cart in firbase 
+    //function for adding item in cart in firebase 
     function addToCart() {
         const REFERENCE_URL = '/Cart/' + item?.name;
         const cartReference = firebase.app().database(DATABASE_URL).ref(REFERENCE_URL);
-        if (user != null) {
+        if (user) {
             cartReference.set({ ...item, "qty": 1, "total": item?.price, "uid": user.uid, "category": category }).then(() => {
                 console.log("Added to Cart")
             }).catch(e => console.log(e))

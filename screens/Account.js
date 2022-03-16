@@ -5,12 +5,15 @@ import { FONTS, SIZES, COLORS, icons, images, DATABASE_URL } from '../constants'
 import SignUp from './SignUp';
 import { Header, CustomButton } from '../components';
 import { firebase } from '@react-native-firebase/database';
+import { setUser } from '../redux/actions';
+import { useDispatch } from 'react-redux';
 
 
-const signOutUser = async (setUser) => {
+const signOutUser = async (setUserInfo, dispatch) => {
     try {
         await firebase.auth().signOut();
-        setUser(null)
+        setUserInfo(null)
+        dispatch(setUser(null))
 
     } catch (e) {
         Alert.alert("Error", e.message)
@@ -19,7 +22,8 @@ const signOutUser = async (setUser) => {
 
 const Account = ({ navigation }) => {
 
-    const [user, setUser] = useState(null)
+    const dispatch = useDispatch();
+    const [userInfo, setUserInfo] = useState(null)
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -27,7 +31,7 @@ const Account = ({ navigation }) => {
             if (currentUser) {
                 const userReference = firebase.app().database(DATABASE_URL).ref('/Users/' + currentUser.uid);
                 userReference.on('value', snapshot => {
-                    setUser(snapshot.val())
+                    setUserInfo(snapshot.val())
                 });
             }
         });
@@ -39,14 +43,14 @@ const Account = ({ navigation }) => {
     return (
 
         <>
-            {user ?
+            {userInfo ?
                 <SafeAreaView style={Globalstyles.container_1}>
                     {/* Header */}
-                    <Header title='Account' icon={icons.logout} onPressIcon={() => signOutUser(setUser)} />
+                    <Header title='Account' icon={icons.logout} onPressIcon={() => signOutUser(setUserInfo, dispatch)} />
 
                     <View style={Globalstyles.container_2}>
                         {/* User Photo */}
-                        {user.photoUrl == 'default' || user.photoUrl == '' || user.photoUrl == undefined ?
+                        {userInfo.photoUrl == 'default' || userInfo.photoUrl == '' || userInfo.photoUrl == undefined ?
                             <View style={styles.image_container}>
                                 <Image
                                     source={icons.user}
@@ -58,7 +62,7 @@ const Account = ({ navigation }) => {
                                 />
                             </View> :
                             <Image
-                                source={{ uri: user.photoUrl }}
+                                source={{ uri: userInfo.photoUrl }}
                                 style={{
                                     width: 100,
                                     height: 100,
@@ -68,7 +72,7 @@ const Account = ({ navigation }) => {
                                 }}
                             />}
                         {/* User Name */}
-                        <Text style={styles.name}>{user.name}</Text>
+                        <Text style={styles.name}>{userInfo.name}</Text>
 
                         {/* Email */}
                         <View style={{ flexDirection: 'row', marginTop: SIZES.padding * 2 }}>
@@ -80,7 +84,7 @@ const Account = ({ navigation }) => {
                                     tintColor: COLORS.black
                                 }}
                             />
-                            <Text style={styles.contact_text}> {user.email}</Text>
+                            <Text style={styles.contact_text}> {userInfo.email}</Text>
                         </View>
 
                         {/* Phone */}
@@ -92,17 +96,17 @@ const Account = ({ navigation }) => {
                                     height: 25,
                                 }}
                             />
-                            <Text style={styles.contact_text}>{user.phone}</Text>
+                            <Text style={styles.contact_text}>{userInfo.phone}</Text>
                         </View>
 
                         {/* Update Button */}
                         <CustomButton text='Update'
-                            onPressButton={() => { navigation.navigate('UpdateProfile', { currentUser: user }) }} />
+                            onPressButton={() => { navigation.navigate('UpdateProfile', { currentUser: userInfo }) }} />
                     </View>
                 </SafeAreaView>
                 :
                 //    Sign Up Screen
-                <SignUp navigation={navigation} fromScreen='Account' setUser={setUser} />}
+                <SignUp navigation={navigation} fromScreen='Account' setUserInfo={setUserInfo} />}
         </>
 
     )

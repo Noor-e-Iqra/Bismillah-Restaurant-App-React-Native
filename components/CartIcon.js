@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { COLORS, icons, SIZES, FONTS } from '../constants';
+import { COLORS, icons, SIZES, FONTS, DATABASE_URL } from '../constants';
 import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
 import { firebase } from '@react-native-firebase/database';
-import auth from "@react-native-firebase/auth"
+import { useSelector } from 'react-redux';
 
 const CartIcon = ({ navigation }) => {
+    const { user } = useSelector(state => state.userReducer);
     const [cartItemsNum, setCartItemsNum] = useState(0)
-    const [user, setUser] = useState(null)
-    const DATABASE_URL = 'https://bm-restaurant-default-rtdb.europe-west1.firebasedatabase.app/'
     const cartReference = firebase.app().database(DATABASE_URL).ref('/Cart/');
 
     useEffect(() => {
-        auth().onAuthStateChanged(onAuthStateChanged)
-        if (user != null) {
+        if (user) {
             cartReference.on('value', snapshot => {
                 setCartItemsNum(snapshot.numChildren());
             });
@@ -22,10 +20,6 @@ const CartIcon = ({ navigation }) => {
         }
 
     }, [user]);
-
-    function onAuthStateChanged(user) {
-        setUser(user)
-    }
 
     return (
         <>

@@ -6,6 +6,8 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { images } from '../constants';
 import auth from "@react-native-firebase/auth"
+import { setUser } from '../redux/actions';
+import { useDispatch } from 'react-redux';
 
 
 //validation schema for signin form
@@ -26,12 +28,13 @@ const signInSchema = yup.object({
 });
 
 //signin user with email and password
-const signInUser = async (values, navigation, screen, item, category, setClicked) => {
+const signInUser = async (values, navigation, screen, item, category, setClicked, dispatch) => {
     setClicked(true)
     try {
         let response = await auth().signInWithEmailAndPassword(values.email, values.password)
         if (response && response.user) {
             setClicked(false)
+            dispatch(setUser(response.user))
             if (screen == 'Account') {
                 navigation.navigate('menu', { screen: 'Account' })
             } else {
@@ -49,6 +52,7 @@ const signInUser = async (values, navigation, screen, item, category, setClicked
 
 const SignIn = ({ navigation, route }) => {
 
+    const dispatch = useDispatch();
     const [screen, setScreen] = useState(null)
     const [item, setItem] = useState(null)
     const [category, setCategory] = useState(null)
@@ -82,7 +86,7 @@ const SignIn = ({ navigation, route }) => {
                         initialValues={{ email: '', password: '' }}
                         validationSchema={signInSchema}
                         onSubmit={(values) => {
-                            signInUser(values, navigation, screen, item, category, setClicked)
+                            signInUser(values, navigation, screen, item, category, setClicked, dispatch)
                         }}>
 
                         {(props) => (

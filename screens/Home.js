@@ -4,21 +4,19 @@ import { COLORS, categoryData, DATABASE_URL } from '../constants';
 import { Globalstyles } from "../styles/GlobalStyle";
 import { MenuList, CategoriesList, HomeHeader } from "../components";
 import { firebase } from '@react-native-firebase/database';
-import auth from "@react-native-firebase/auth"
-
+import { useSelector } from 'react-redux';
 
 const Home = ({ navigation }) => {
+
+    const { user } = useSelector(state => state.userReducer);
     const [menu, setMenu] = useState(null)
     const [selectedCategory, setSelectedCategory] = useState(null)
-    const [user, setUser] = useState(null)
     const [userPhoto, setUserPhoto] = useState(null)
     const [favorites, setFavorites] = useState([]);
     const [categorySelected, setCategorySelected] = useState(false)
     const menuReference = firebase.app().database(DATABASE_URL).ref('/Menu/');
 
     useEffect(() => {
-
-        auth().onAuthStateChanged(onAuthStateChanged)
         let array = [];
         menuReference.on('value', snapshot => {
             snapshot.forEach((item) => {
@@ -37,9 +35,6 @@ const Home = ({ navigation }) => {
 
     }, [user]);
 
-    function onAuthStateChanged(user) {
-        setUser(user)
-    }
 
     function getFavorites() {
         if (user) {

@@ -7,6 +7,8 @@ import * as yup from 'yup';
 import { images, DATABASE_URL } from '../constants';
 import { firebase } from '@react-native-firebase/database';
 import auth from "@react-native-firebase/auth"
+import { setUser } from '../redux/actions';
+import { useDispatch } from 'react-redux';
 
 
 // validation schema for signup form
@@ -37,9 +39,10 @@ const signUpSchema = yup.object({
 });
 
 // function for creating user with email and password
-const createUser = async (values, navigation, screen, item, category, setUser, setClicked) => {
+const createUser = async (values, navigation, screen, item, category, setUserInfo, setClicked, dispatch) => {
     setClicked(true)
     try {
+
         let response = await auth().createUserWithEmailAndPassword(values.email, values.password)
         if (response) {
             let uid = firebase.auth().currentUser.uid;
@@ -53,10 +56,11 @@ const createUser = async (values, navigation, screen, item, category, setUser, s
                     .then(() => {
                         console.log("User created successfully")
                         setClicked(false)
+                        dispatch(setUser(response.user))
                         if (screen == 'Account') {
-                            if (setUser != null) {
+                            if (setUserInfo != null) {
                                 usersReference.on('value', snapshot => {
-                                    setUser(snapshot.val())
+                                    setUserInfo(snapshot.val())
                                 });
                             } else {
                                 navigation.navigate('menu', { screen: 'Account' })
@@ -80,8 +84,9 @@ const createUser = async (values, navigation, screen, item, category, setUser, s
     }
 }
 
-const SignUp = ({ navigation, route, fromScreen, setUser }) => {
+const SignUp = ({ navigation, route, fromScreen, setUserInfo }) => {
 
+    const dispatch = useDispatch();
     const [screen, setScreen] = useState(null)
     const [item, setItem] = useState(null)
     const [category, setCategory] = useState(null)
@@ -118,7 +123,7 @@ const SignUp = ({ navigation, route, fromScreen, setUser }) => {
                         initialValues={{ name: '', email: '', password: '', phone: '' }}
                         validationSchema={signUpSchema}
                         onSubmit={(values) => {
-                            createUser(values, navigation, screen, item, category, setUser, setClicked)
+                            createUser(values, navigation, screen, item, category, setUserInfo, setClicked, dispatch)
                         }}>
 
                         {(props) => (

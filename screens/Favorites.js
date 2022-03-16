@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView } from "react-native";
-import { COLORS, icons, FONTS, categoryData, DATABASE_URL } from '../constants';
+import { FONTS, categoryData, DATABASE_URL } from '../constants';
 import { MenuList, Header } from "../components";
 import { firebase } from '@react-native-firebase/database';
-import auth from "@react-native-firebase/auth"
 import { Globalstyles } from "../styles/GlobalStyle";
-
+import { useSelector } from 'react-redux';
 
 const Favorites = ({ navigation }) => {
+
+    const { user } = useSelector(state => state.userReducer);
     const [favorites, setFavorites] = useState([]);
-    const [user, setUser] = useState(null)
     const favoriteReference = firebase.app().database(DATABASE_URL).ref('/Favorite/');
 
     useEffect(() => {
         let array = [];
-        auth().onAuthStateChanged(onAuthStateChanged)
         if (user) {
             favoriteReference.on('value', snapshot => {
                 snapshot.forEach((item) => {
@@ -29,10 +28,6 @@ const Favorites = ({ navigation }) => {
         } else
             setFavorites([])
     }, [user]);
-
-    function onAuthStateChanged(user) {
-        setUser(user)
-    }
 
     function removeFavorite(favoriteItemName) {
         firebase.app().database(DATABASE_URL).ref('/Favorite/' + favoriteItemName.name).remove();

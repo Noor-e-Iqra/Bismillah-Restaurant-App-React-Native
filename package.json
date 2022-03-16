@@ -11,6 +11,7 @@
     "generate": "npx react-native generate-bootsplash ./assets/images/logo.png --background-color=E1AD01 --logo-width=100 --assets-path=./assets/bootsplash --flavor=main"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.16.3",
     "@react-native-community/cli-platform-android": "^7.0.1",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-firebase/app": "^14.3.1",
@@ -35,6 +36,10 @@
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.10.2",
     "react-native-svg": "^12.1.1",
+    "react-redux": "^7.2.6",
+    "redux": "^4.1.2",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.4.1",
     "svg": "^0.1.0",
     "yup": "^0.32.11"
   },

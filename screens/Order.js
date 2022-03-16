@@ -5,19 +5,16 @@ import { OrderList } from "../components";
 import { Globalstyles } from "../styles/GlobalStyle";
 import { Header } from "../components";
 import { firebase } from '@react-native-firebase/database';
-import auth from "@react-native-firebase/auth"
-
+import { useSelector } from 'react-redux';
 
 const Order = ({ navigation }) => {
-
+    const { user } = useSelector(state => state.userReducer);
     const [orders, setOrders] = useState([])
-    const [user, setUser] = useState(null)
     const orderReference = firebase.app().database(DATABASE_URL).ref('/Order/');
 
     useEffect(() => {
-        auth().onAuthStateChanged(onAuthStateChanged)
         let array = [];
-        if (user != null) {
+        if (user) {
             orderReference.on('value', snapshot => {
                 snapshot.forEach((snapshotItem) => {
                     var item = snapshotItem.val()
@@ -30,10 +27,6 @@ const Order = ({ navigation }) => {
         } else
             setOrders([])
     }, [user]);
-
-    function onAuthStateChanged(user) {
-        setUser(user)
-    }
 
     function deleteOrder(oid) {
         firebase.app().database(DATABASE_URL).ref('/Order/' + oid).remove();

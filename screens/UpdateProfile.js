@@ -85,7 +85,6 @@ const UpdateProfile = ({ route, navigation }) => {
     const [clicked, setClicked] = useState(false)
 
     useEffect(() => {
-
         const { currentUser } = route.params;
         setUser(currentUser)
         setImage(currentUser.photoUrl)
