@@ -25,6 +25,7 @@
 - Formik
 - Yup
 - Firebase (database)
+- Redux (user state management)
 
 
 ## Run Locally 
