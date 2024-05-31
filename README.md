@@ -71,3 +71,9 @@
 
 https://drive.google.com/file/d/1-WHP-A-R32PiUPYwRbL0kZUZvVcqkPOl/view?usp=sharing
 
+
+## 📊 GitHub Stats
+
+<a href="https://github.com/Noor-e-Iqra/Bismillah-Restaurant-App-React-Native">
+  <img src="https://github-readme-stats.vercel.app/api/pin/?username=Noor-e-Iqra&repo=Bismillah-Restaurant-App-React-Native&theme=algolia" alt="Repository Stats"/>
+</a>
